@@ -1,24 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import Search from "./components/Search/Search";
+import { Router } from "@reach/router";
+import SingleView from "./components/SingleView/SingleView";
+import { useState } from "react";
+import dataContext from "./Context";
 
 function App() {
+
+  var dataArray = useState([]);
+
+
+
+  Notification.requestPermission(function(status) {
+    console.log("Notification permission status:", status);
+  })
+
+  function displayNotification() {
+    if (Notification.permission === "granted") {
+      navigator.serviceWorker.getRegistration()
+        .then(function(reg) {
+          reg.showNotification("Hello world");
+        });
+    }
+  }
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <dataContext.Provider value={dataArray}>
+        <Router>
+          <Search path="/" />
+          <SingleView path="/single-view/:id" />
+        </Router>
+        <button onClick={() => displayNotification()}>Click me</button>
+      </dataContext.Provider>
     </div>
   );
 }
